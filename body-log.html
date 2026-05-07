@@ -1,0 +1,555 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="BODY LOG">
+<title>BODY LOG</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+JP:wght@400;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg: #f7f3ee; --card: #fff; --ink: #1a1208; --muted: #9a8e80;
+    --accent: #c84b2f; --accent-light: #f0d5cf;
+    --green: #2e7d5e; --green-light: #d4ede5; --border: #e8e0d5;
+  }
+  body { background: var(--bg); color: var(--ink); font-family: 'Noto Serif JP', serif; min-height: 100vh; }
+  #app { max-width: 480px; margin: 0 auto; padding: 24px 16px 60px; }
+
+  /* Header */
+  .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+  .app-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--accent); }
+  .date-str { font-size: 12px; color: var(--muted); margin-top: 2px; }
+  .streak-badge { background: var(--accent-light); border: 1px solid var(--accent); border-radius: 6px; padding: 6px 12px; text-align: center; }
+  .streak-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px; color: var(--accent); display: block; line-height: 1; }
+  .streak-lbl { font-size: 10px; color: var(--accent); letter-spacing: 1px; }
+
+  /* Goal card */
+  .goal-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+  .goal-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
+  .lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 2px; }
+  .goal-val { font-weight: 700; font-size: 20px; }
+  .goal-date { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .days-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 26px; color: var(--green); }
+  .days-unit { font-size: 13px; font-weight: 400; }
+  .ideal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; }
+  .ideal-val { color: var(--green); font-weight: 700; font-family: 'JetBrains Mono', monospace; }
+  .diff-row { font-size: 13px; margin-top: 4px; }
+
+  /* Tabs */
+  .tabs { display: flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; margin-bottom: 16px; }
+  .tab { flex: 1; background: var(--card); border: none; padding: 10px 0; font-size: 13px; font-family: 'Noto Serif JP', serif; color: var(--muted); cursor: pointer; transition: all 0.15s; }
+  .tab.active { background: var(--ink); color: var(--bg); font-weight: 700; }
+
+  /* Cal summary */
+  .cal-card { text-align: center; padding: 12px 0 8px; margin-bottom: 8px; }
+  .cal-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 52px; color: var(--accent); letter-spacing: -2px; line-height: 1; }
+  .cal-unit { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+  /* Section */
+  .section { margin-bottom: 20px; }
+  .sec-title { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
+
+  /* Meal input */
+  .meal-entry { margin-bottom: 12px; }
+  .meal-label-txt { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 4px; }
+  .input-row { display: flex; gap: 8px; }
+  .text-input { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 9px 12px; font-size: 13px; font-family: 'Noto Serif JP', serif; color: var(--ink); -webkit-appearance: none; }
+  .text-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .add-btn { background: var(--ink); color: var(--bg); border: none; border-radius: 4px; padding: 9px 14px; font-size: 12px; font-family: 'Noto Serif JP', serif; font-weight: 700; cursor: pointer; white-space: nowrap; }
+  .add-btn:disabled { opacity: 0.4; }
+
+  /* Meal rows */
+  .meal-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 8px; animation: fadeIn 0.3s ease; }
+  .meal-row-l { flex: 1; }
+  .meal-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+  .meal-tag { font-size: 10px; background: var(--accent-light); color: var(--accent); padding: 1px 6px; border-radius: 2px; font-weight: 700; }
+  .meal-time { font-size: 10px; color: var(--muted); }
+  .meal-txt { font-size: 13px; color: var(--ink); margin-bottom: 4px; }
+  .unknown-note { font-size: 10px; color: var(--muted); margin-bottom: 4px; font-style: italic; }
+  .meal-chips { display: flex; flex-wrap: wrap; gap: 4px; }
+  .meal-chip { font-size: 10px; background: var(--border); color: var(--muted); padding: 2px 6px; border-radius: 10px; }
+  .meal-row-r { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; flex-shrink: 0; }
+  .meal-cal { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 18px; color: var(--accent); line-height: 1; }
+  .meal-cal-unit { font-size: 10px; color: var(--muted); }
+  .del-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 11px; padding: 2px; }
+
+  /* Weight */
+  .w-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+  .w-input { width: 90px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 9px 12px; font-size: 18px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); -webkit-appearance: none; }
+  .w-input:focus { outline: 2px solid var(--accent); }
+  .w-unit { font-size: 13px; color: var(--muted); }
+  .weight-logged { font-size: 12px; color: var(--green); margin-top: 4px; animation: fadeIn 0.3s ease; }
+
+  /* Advice */
+  .advice-box { background: var(--green-light); border: 1px solid var(--green); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; animation: fadeIn 0.3s ease; }
+  .advice-title { font-size: 11px; letter-spacing: 2px; color: var(--green); text-transform: uppercase; margin-bottom: 8px; }
+  .advice-txt { font-size: 14px; line-height: 1.8; color: var(--ink); }
+
+  /* Graph */
+  .graph-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 12px; margin-bottom: 16px; }
+  .no-data { text-align: center; color: var(--muted); font-size: 13px; line-height: 1.8; padding: 30px 0; }
+  .hist-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
+  .hist-date { color: var(--muted); font-size: 11px; font-family: 'JetBrains Mono', monospace; }
+  .hist-w { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); }
+  .hist-status { font-size: 11px; }
+
+  /* Tab content */
+  .tab-content { display: none; }
+  .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+</style>
+</head>
+<body>
+<div id="app">
+  <!-- Header -->
+  <div class="header">
+    <div>
+      <div class="app-name">BODY LOG</div>
+      <div class="date-str" id="dateStr"></div>
+    </div>
+    <div class="streak-badge">
+      <span class="streak-num" id="streakNum">0</span>
+      <span class="streak-lbl">日連続</span>
+    </div>
+  </div>
+
+  <!-- Goal card -->
+  <div class="goal-card">
+    <div class="goal-row">
+      <div>
+        <div class="lbl">目標</div>
+        <div class="goal-val">58.0kg <span class="goal-date">2026.12.31</span></div>
+      </div>
+      <div style="text-align:right">
+        <div class="lbl">残り</div>
+        <div class="days-num" id="daysLeft">-<span class="days-unit">日</span></div>
+      </div>
+    </div>
+    <div class="ideal-row">
+      <span class="lbl">今日の理想体重</span>
+      <span class="ideal-val" id="idealWeight">-</span>
+    </div>
+    <div class="diff-row" id="weightDiff" style="display:none"></div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('today')">今日の記録</button>
+    <button class="tab" onclick="switchTab('graph')">グラフ</button>
+  </div>
+
+  <!-- TODAY tab -->
+  <div id="tab-today" class="tab-content active">
+    <div class="cal-card">
+      <div class="cal-num" id="totalCal">0</div>
+      <div class="cal-unit">kcal　今日の合計</div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">食事を記録する</div>
+      <div id="mealInputs"></div>
+    </div>
+
+    <div class="section" id="mealListSection" style="display:none">
+      <div class="sec-title">今日の食事</div>
+      <div id="mealList"></div>
+    </div>
+
+    <div class="section">
+      <div class="sec-title">今日の体重</div>
+      <div class="w-row">
+        <input class="w-input" type="number" id="weightInput" step="0.1" placeholder="64.3" inputmode="decimal">
+        <span class="w-unit">kg</span>
+        <button class="add-btn" onclick="logWeight()">記録</button>
+      </div>
+      <div class="weight-logged" id="weightLogged" style="display:none"></div>
+    </div>
+
+    <div id="adviceBox" style="display:none" class="advice-box">
+      <div class="advice-title">今日のアドバイス</div>
+      <div class="advice-txt" id="adviceTxt"></div>
+    </div>
+  </div>
+
+  <!-- GRAPH tab -->
+  <div id="tab-graph" class="tab-content">
+    <div class="graph-card">
+      <div class="sec-title">体重推移 vs 目標ライン</div>
+      <div id="noData" class="no-data">まだ体重データがありません。<br>毎日記録するとグラフが表示されます。</div>
+      <canvas id="weightChart" style="display:none"></canvas>
+    </div>
+    <div class="section">
+      <div class="sec-title">記録一覧（直近14日）</div>
+      <div id="histList"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── 定数 ─────────────────────────────────────────────────────────────────────
+const GOAL_WEIGHT = 58.0;
+const GOAL_DATE = new Date("2026-12-31");
+const START_DATE = new Date("2026-05-07");
+const START_WEIGHT = 65.0;
+const STORAGE_KEY = "healthlog_v2";
+const MEAL_LABELS = ["朝食","昼食","夕食","間食"];
+
+// ── 食品データベース ───────────────────────────────────────────────────────────
+const FOOD_DB = [
+  {keys:["ご飯","ごはん","白米"],cal:252,unit:"茶碗1杯"},
+  {keys:["ご飯大盛り","大盛りご飯"],cal:378,unit:"大盛り"},
+  {keys:["ご飯少なめ","ごはん少なめ"],cal:180,unit:"少なめ"},
+  {keys:["おにぎり","おむすび"],cal:170,unit:"1個"},
+  {keys:["食パン","トースト","パン"],cal:158,unit:"1枚"},
+  {keys:["クロワッサン"],cal:210,unit:"1個"},
+  {keys:["うどん"],cal:270,unit:"1杯"},
+  {keys:["そば","蕎麦"],cal:260,unit:"1杯"},
+  {keys:["ラーメン","らーめん"],cal:480,unit:"1杯"},
+  {keys:["パスタ","スパゲッティ"],cal:380,unit:"1人前"},
+  {keys:["チャーハン","焼き飯"],cal:620,unit:"1人前"},
+  {keys:["カレーライス","カレー"],cal:720,unit:"1人前"},
+  {keys:["オムライス"],cal:650,unit:"1人前"},
+  {keys:["親子丼"],cal:580,unit:"1杯"},
+  {keys:["牛丼大盛り"],cal:820,unit:"大盛り"},
+  {keys:["牛丼"],cal:637,unit:"並盛り"},
+  {keys:["天丼"],cal:730,unit:"1杯"},
+  {keys:["刺身定食","さしみ定食"],cal:500,unit:"1食"},
+  {keys:["焼き魚定食","焼魚定食"],cal:520,unit:"1食"},
+  {keys:["焼肉定食"],cal:750,unit:"1食"},
+  {keys:["ハンバーグ定食"],cal:680,unit:"1食"},
+  {keys:["唐揚げ定食","からあげ定食"],cal:750,unit:"1食"},
+  {keys:["豚骨ラーメン"],cal:550,unit:"1杯"},
+  {keys:["味噌ラーメン"],cal:510,unit:"1杯"},
+  {keys:["醤油ラーメン"],cal:470,unit:"1杯"},
+  {keys:["つけ麺"],cal:580,unit:"1人前"},
+  {keys:["焼きそば"],cal:450,unit:"1人前"},
+  {keys:["そうめん","素麺"],cal:220,unit:"1人前"},
+  {keys:["唐揚げ","からあげ"],cal:220,unit:"3個"},
+  {keys:["焼き鳥","やきとり"],cal:130,unit:"2本"},
+  {keys:["ステーキ"],cal:400,unit:"150g"},
+  {keys:["トンカツ","豚カツ"],cal:380,unit:"1枚"},
+  {keys:["ハンバーグ"],cal:280,unit:"1個"},
+  {keys:["餃子","ぎょうざ"],cal:200,unit:"5個"},
+  {keys:["焼き魚","焼魚","鮭","さけ"],cal:170,unit:"1切れ"},
+  {keys:["刺身","さしみ"],cal:150,unit:"1人前"},
+  {keys:["エビフライ"],cal:180,unit:"2本"},
+  {keys:["天ぷら","てんぷら"],cal:300,unit:"盛り合わせ"},
+  {keys:["しゃぶしゃぶ"],cal:400,unit:"1人前"},
+  {keys:["すき焼き"],cal:520,unit:"1人前"},
+  {keys:["目玉焼き"],cal:90,unit:"1個"},
+  {keys:["ゆで卵","茹で卵"],cal:78,unit:"1個"},
+  {keys:["卵","たまご","玉子"],cal:78,unit:"1個"},
+  {keys:["スクランブルエッグ"],cal:140,unit:"2個分"},
+  {keys:["豆腐","冷奴","湯豆腐"],cal:80,unit:"1丁"},
+  {keys:["納豆","なっとう"],cal:100,unit:"1パック"},
+  {keys:["味噌汁","みそ汁","みそしる"],cal:35,unit:"1杯"},
+  {keys:["サラダ","グリーンサラダ"],cal:30,unit:"1皿"},
+  {keys:["シーザーサラダ"],cal:180,unit:"1皿"},
+  {keys:["ポテトサラダ"],cal:160,unit:"1人前"},
+  {keys:["野菜炒め","やさい炒め"],cal:150,unit:"1人前"},
+  {keys:["枝豆","えだまめ"],cal:100,unit:"100g"},
+  {keys:["ビッグマック"],cal:525,unit:"1個"},
+  {keys:["チーズバーガー"],cal:330,unit:"1個"},
+  {keys:["ハンバーガー","バーガー"],cal:290,unit:"1個"},
+  {keys:["フライドポテト","ポテト"],cal:240,unit:"Mサイズ"},
+  {keys:["ピザ"],cal:260,unit:"1切れ"},
+  {keys:["たこ焼き","タコ焼き"],cal:300,unit:"8個"},
+  {keys:["お好み焼き"],cal:380,unit:"1枚"},
+  {keys:["牛乳","ミルク"],cal:130,unit:"200ml"},
+  {keys:["ヨーグルト"],cal:60,unit:"1個"},
+  {keys:["チーズ"],cal:100,unit:"1枚"},
+  {keys:["バナナ"],cal:86,unit:"1本"},
+  {keys:["りんご","リンゴ"],cal:84,unit:"1個"},
+  {keys:["みかん","オレンジ"],cal:45,unit:"1個"},
+  {keys:["いちご","苺"],cal:30,unit:"5個"},
+  {keys:["スイカ","すいか"],cal:80,unit:"1切れ"},
+  {keys:["桃","もも"],cal:65,unit:"1個"},
+  {keys:["チョコレート","チョコ"],cal:150,unit:"板チョコ半分"},
+  {keys:["ポテトチップス","ポテチ"],cal:350,unit:"1袋"},
+  {keys:["クッキー"],cal:80,unit:"2枚"},
+  {keys:["ショートケーキ","ケーキ"],cal:320,unit:"1個"},
+  {keys:["アイスクリーム","アイス"],cal:180,unit:"1個"},
+  {keys:["プリン"],cal:130,unit:"1個"},
+  {keys:["大福","だいふく"],cal:120,unit:"1個"},
+  {keys:["どら焼き"],cal:180,unit:"1個"},
+  {keys:["せんべい","煎餅"],cal:100,unit:"3枚"},
+  {keys:["カフェラテ","ラテ"],cal:120,unit:"1杯"},
+  {keys:["コーヒー","珈琲"],cal:5,unit:"ブラック1杯"},
+  {keys:["緑茶","お茶","日本茶"],cal:2,unit:"1杯"},
+  {keys:["コーラ","ジュース","サイダー"],cal:140,unit:"350ml"},
+  {keys:["オレンジジュース","野菜ジュース"],cal:110,unit:"200ml"},
+  {keys:["プロテイン"],cal:120,unit:"1杯"},
+  {keys:["サンドイッチ"],cal:280,unit:"1パック"},
+  {keys:["おでん"],cal:150,unit:"3種"},
+  {keys:["肉まん"],cal:200,unit:"1個"},
+  {keys:["あんまん"],cal:220,unit:"1個"},
+  {keys:["シュウマイ","焼売"],cal:180,unit:"3個"},
+];
+
+// ── カロリー推定 ───────────────────────────────────────────────────────────────
+function estimateCal(text) {
+  const lower = text.toLowerCase();
+  const results = [];
+  const matched = new Set();
+  for (const food of FOOD_DB) {
+    for (const key of food.keys) {
+      if (lower.includes(key.toLowerCase()) && !matched.has(food)) {
+        matched.add(food);
+        // 数量チェック
+        const numMatch = lower.match(new RegExp(`(\\d+)\\s*(?:個|本|杯|枚|皿).*${key}|${key}.*?(\\d+)\\s*(?:個|本|杯|枚|皿)`));
+        const qty = numMatch ? parseInt(numMatch[1] || numMatch[2]) : 1;
+        results.push({ name: food.keys[0], cal: Math.round(food.cal * qty), unit: food.unit });
+        break;
+      }
+    }
+  }
+  if (results.length === 0) {
+    results.push({ name: text, cal: 400, unit: "推定値", unknown: true });
+  }
+  return { items: results, total: results.reduce((s, r) => s + r.cal, 0), unknown: results.some(r => r.unknown) };
+}
+
+// ── ストレージ ─────────────────────────────────────────────────────────────────
+function loadData() {
+  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { days: {} }; }
+  catch { return { days: {} }; }
+}
+function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+// ── 目標計算 ───────────────────────────────────────────────────────────────────
+function calcDaysLeft() {
+  return Math.max(0, Math.ceil((GOAL_DATE - new Date()) / 86400000));
+}
+function calcIdealWeight(dateStr) {
+  const d = new Date(dateStr);
+  const ratio = Math.min(1, Math.max(0, (d - START_DATE) / (GOAL_DATE - START_DATE)));
+  return Math.round((START_WEIGHT - (START_WEIGHT - GOAL_WEIGHT) * ratio) * 10) / 10;
+}
+function getAdvice(totalCal, weight, daysLeft) {
+  const diff = weight - GOAL_WEIGHT;
+  const targetCal = Math.round(1700 - (diff * 7700 / daysLeft) * 0.5);
+  if (totalCal > 2200) return `今日は${totalCal}kcalと多めでした。目安の${targetCal}kcal前後を意識すると、12月31日の目標に近づきます。明日は野菜から食べ始めてみましょう。`;
+  if (totalCal > 1800) return `今日は${totalCal}kcalとまずまずのペースです。残り${daysLeft}日、この調子で続ければ目標の58kgは届きます。`;
+  if (totalCal > 1200) return `今日は${totalCal}kcalと理想的な範囲です。極端に減らさずこのバランスを保つのが長続きの秘訣です。`;
+  return `今日は${totalCal}kcalと少なめです。急激な制限は続かないので、栄養バランスには気をつけてください。`;
+}
+
+// ── グローバル状態 ─────────────────────────────────────────────────────────────
+let appData = loadData();
+let chartInstance = null;
+
+function getToday() { return appData.days[todayKey()] || { meals: [], weight: null }; }
+function saveToday(patch) {
+  const today = todayKey();
+  appData.days[today] = { ...getToday(), ...patch };
+  saveData(appData);
+}
+
+// ── 描画 ───────────────────────────────────────────────────────────────────────
+function render() {
+  const today = getToday();
+  const todayStr = todayKey();
+
+  // 日付
+  document.getElementById("dateStr").textContent =
+    new Date().toLocaleDateString("ja-JP", { month: "long", day: "numeric", weekday: "short" });
+
+  // ストリーク
+  let streak = 0, d = new Date();
+  while (true) {
+    const k = d.toISOString().slice(0, 10);
+    if (appData.days[k]?.weight) { streak++; d.setDate(d.getDate() - 1); } else break;
+  }
+  document.getElementById("streakNum").textContent = streak;
+
+  // 目標
+  const dl = calcDaysLeft();
+  document.getElementById("daysLeft").innerHTML = `${dl}<span class="days-unit">日</span>`;
+  const ideal = calcIdealWeight(todayStr);
+  document.getElementById("idealWeight").textContent = `${ideal} kg`;
+
+  // 体重差
+  const diffEl = document.getElementById("weightDiff");
+  if (today.weight) {
+    const diff = Math.round((today.weight - GOAL_WEIGHT) * 10) / 10;
+    diffEl.style.display = "block";
+    diffEl.innerHTML = `<span style="color:${diff > 0 ? 'var(--accent)' : 'var(--green)'}; font-weight:700">${diff > 0 ? "▲" : "▼"}${Math.abs(diff)}kg</span> <span style="color:var(--muted)">目標まで</span>`;
+  } else { diffEl.style.display = "none"; }
+
+  // 合計カロリー
+  const totalCal = (today.meals || []).reduce((s, m) => s + (m.total || 0), 0);
+  document.getElementById("totalCal").textContent = totalCal.toLocaleString();
+
+  // 食事入力欄
+  const inputsEl = document.getElementById("mealInputs");
+  inputsEl.innerHTML = MEAL_LABELS.map(label => `
+    <div class="meal-entry">
+      <div class="meal-label-txt">${label}</div>
+      <div class="input-row">
+        <input class="text-input" id="input-${label}" placeholder="${
+          label==="朝食"?"例：バナナ、トースト、コーヒー":
+          label==="昼食"?"例：牛丼並盛り、味噌汁":
+          label==="夕食"?"例：刺身定食、ご飯少なめ":"例：りんご、チョコ少し"
+        }" onkeydown="if(event.key==='Enter')addMeal('${label}')">
+        <button class="add-btn" onclick="addMeal('${label}')">追加</button>
+      </div>
+    </div>
+  `).join("");
+
+  // 食事リスト
+  const meals = today.meals || [];
+  const listSection = document.getElementById("mealListSection");
+  const listEl = document.getElementById("mealList");
+  if (meals.length > 0) {
+    listSection.style.display = "block";
+    listEl.innerHTML = meals.map((m, i) => `
+      <div class="meal-row">
+        <div class="meal-row-l">
+          <div class="meal-meta">
+            <span class="meal-tag">${m.label}</span>
+            <span class="meal-time">${m.timestamp || ""}</span>
+          </div>
+          <div class="meal-txt">${m.text}</div>
+          ${m.unknown ? '<div class="unknown-note">※未登録食品のため概算400kcalで計上</div>' : ""}
+          <div class="meal-chips">${(m.items||[]).map(it=>`<span class="meal-chip">${it.name} ${it.cal}kcal</span>`).join("")}</div>
+        </div>
+        <div class="meal-row-r">
+          <span class="meal-cal">${m.total}</span>
+          <span class="meal-cal-unit">kcal</span>
+          <button class="del-btn" onclick="removeMeal(${i})">✕</button>
+        </div>
+      </div>
+    `).join("");
+  } else { listSection.style.display = "none"; }
+
+  // 体重
+  const wLogged = document.getElementById("weightLogged");
+  if (today.weight) {
+    wLogged.style.display = "block";
+    wLogged.textContent = `✓ 本日 ${today.weight}kg を記録済み`;
+  } else { wLogged.style.display = "none"; }
+
+  // アドバイス
+  const adviceBox = document.getElementById("adviceBox");
+  if (today.weight && totalCal > 0) {
+    adviceBox.style.display = "block";
+    document.getElementById("adviceTxt").textContent = getAdvice(totalCal, today.weight, dl);
+  } else { adviceBox.style.display = "none"; }
+
+  // グラフ・履歴
+  renderGraph();
+}
+
+function renderGraph() {
+  const weightDays = Object.entries(appData.days)
+    .filter(([,d]) => d.weight).sort(([a],[b]) => a.localeCompare(b));
+
+  const noData = document.getElementById("noData");
+  const canvas = document.getElementById("weightChart");
+
+  if (weightDays.length === 0) {
+    noData.style.display = "block"; canvas.style.display = "none";
+  } else {
+    noData.style.display = "none"; canvas.style.display = "block";
+
+    // ラベルと実測・理想データ
+    const labels = [], actualData = [], goalData = [];
+    const start = new Date(weightDays[0][0]);
+    const end = new Date(Math.min(GOAL_DATE, new Date(weightDays[weightDays.length-1][0])));
+    end.setMonth(end.getMonth() + 1);
+    const cur = new Date(start);
+    while (cur <= end) {
+      const k = cur.toISOString().slice(0, 10);
+      labels.push(k.slice(5));
+      goalData.push(calcIdealWeight(k));
+      const entry = appData.days[k];
+      actualData.push(entry?.weight || null);
+      cur.setDate(cur.getDate() + 7);
+    }
+
+    if (chartInstance) chartInstance.destroy();
+    chartInstance = new Chart(canvas, {
+      type: "line",
+      data: {
+        labels,
+        datasets: [
+          { label: "理想ペース", data: goalData, borderColor: "#2e7d5e", borderDash: [5,5], borderWidth: 1.5, pointRadius: 0, tension: 0.3 },
+          { label: "実測", data: actualData, borderColor: "#c84b2f", borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: "#c84b2f", tension: 0.3, spanGaps: true },
+        ]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: true,
+        plugins: { legend: { labels: { font: { family: "'Noto Serif JP',serif", size: 11 }, color: "#9a8e80" } }, tooltip: { titleFont: { family: "inherit" }, bodyFont: { family: "inherit" } } },
+        scales: {
+          x: { ticks: { font: { family: "inherit", size: 9 }, color: "#9a8e80" }, grid: { color: "#e8e0d5" } },
+          y: { ticks: { font: { family: "inherit", size: 9 }, color: "#9a8e80" }, grid: { color: "#e8e0d5" } }
+        }
+      }
+    });
+  }
+
+  // 履歴リスト
+  const histEl = document.getElementById("histList");
+  if (weightDays.length === 0) { histEl.innerHTML = ""; return; }
+  histEl.innerHTML = [...weightDays].reverse().slice(0, 14).map(([date, d]) => {
+    const diff = Math.round((d.weight - GOAL_WEIGHT) * 10) / 10;
+    return `<div class="hist-row">
+      <span class="hist-date">${date}</span>
+      <span class="hist-w">${d.weight} kg</span>
+      <span class="hist-status" style="color:${d.weight<=GOAL_WEIGHT?'var(--green)':'var(--muted)'}">
+        ${d.weight<=GOAL_WEIGHT?"✓ 目標達成!":"あと "+Math.abs(diff)+"kg"}
+      </span>
+    </div>`;
+  }).join("");
+}
+
+// ── アクション ─────────────────────────────────────────────────────────────────
+function addMeal(label) {
+  const input = document.getElementById(`input-${label}`);
+  const text = input.value.trim();
+  if (!text) return;
+  const result = estimateCal(text);
+  const meals = [...(getToday().meals || []), {
+    label, text, ...result,
+    timestamp: new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
+  }];
+  saveToday({ meals });
+  input.value = "";
+  render();
+}
+
+function removeMeal(idx) {
+  const meals = [...(getToday().meals || [])];
+  meals.splice(idx, 1);
+  saveToday({ meals });
+  render();
+}
+
+function logWeight() {
+  const val = parseFloat(document.getElementById("weightInput").value);
+  if (isNaN(val) || val < 30 || val > 200) return;
+  saveToday({ weight: val });
+  document.getElementById("weightInput").value = "";
+  render();
+}
+
+function switchTab(tab) {
+  document.querySelectorAll(".tab").forEach((el, i) => {
+    el.classList.toggle("active", (i === 0 && tab === "today") || (i === 1 && tab === "graph"));
+  });
+  document.getElementById("tab-today").classList.toggle("active", tab === "today");
+  document.getElementById("tab-graph").classList.toggle("active", tab === "graph");
+  if (tab === "graph") renderGraph();
+}
+
+// ── 起動 ──────────────────────────────────────────────────────────────────────
+render();
+</script>
+</body>
+</html>
