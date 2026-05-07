@@ -19,6 +19,18 @@
   body { background: var(--bg); color: var(--ink); font-family: 'Noto Serif JP', serif; min-height: 100vh; }
   #app { max-width: 480px; margin: 0 auto; padding: 24px 16px 60px; }
 
+  /* 初期設定画面 */
+  .setup-screen { min-height: 100vh; display: flex; flex-direction: column; justify-content: center; padding: 32px 16px; max-width: 480px; margin: 0 auto; }
+  .setup-title { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 28px; letter-spacing: 3px; color: var(--accent); margin-bottom: 8px; }
+  .setup-sub { font-size: 13px; color: var(--muted); margin-bottom: 40px; line-height: 1.6; }
+  .setup-field { margin-bottom: 24px; }
+  .setup-label { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 8px; display: block; }
+  .setup-input { width: 100%; background: var(--card); border: 1.5px solid var(--border); border-radius: 6px; padding: 12px 16px; font-size: 20px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); -webkit-appearance: none; }
+  .setup-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .setup-input-sm { font-size: 15px; font-family: 'Noto Serif JP', serif; font-weight: 400; }
+  .setup-note { font-size: 11px; color: var(--muted); margin-top: 6px; }
+  .setup-btn { width: 100%; background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 16px 0; font-size: 15px; font-family: 'Noto Serif JP', serif; font-weight: 700; cursor: pointer; margin-top: 8px; letter-spacing: 1px; }
+
   /* Header */
   .header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
   .app-name { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 22px; letter-spacing: 3px; color: var(--accent); }
@@ -28,11 +40,12 @@
   .streak-lbl { font-size: 10px; color: var(--accent); letter-spacing: 1px; }
 
   /* Goal card */
-  .goal-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; }
+  .goal-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; position: relative; }
+  .goal-edit-btn { position: absolute; top: 10px; right: 12px; background: none; border: 1px solid var(--border); border-radius: 4px; padding: 3px 8px; font-size: 10px; color: var(--muted); cursor: pointer; font-family: inherit; }
   .goal-row { display: flex; justify-content: space-between; align-items: flex-end; margin-bottom: 8px; }
   .lbl { font-size: 10px; color: var(--muted); letter-spacing: 1px; margin-bottom: 2px; }
   .goal-val { font-weight: 700; font-size: 20px; }
-  .goal-date { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 4px; }
+  .goal-date-lbl { font-size: 12px; color: var(--muted); font-weight: 400; margin-left: 4px; }
   .days-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 26px; color: var(--green); }
   .days-unit { font-size: 13px; font-weight: 400; }
   .ideal-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; font-size: 13px; }
@@ -44,25 +57,20 @@
   .tab { flex: 1; background: var(--card); border: none; padding: 10px 0; font-size: 13px; font-family: 'Noto Serif JP', serif; color: var(--muted); cursor: pointer; transition: all 0.15s; }
   .tab.active { background: var(--ink); color: var(--bg); font-weight: 700; }
 
-  /* Cal summary */
   .cal-card { text-align: center; padding: 12px 0 8px; margin-bottom: 8px; }
   .cal-num { font-family: 'JetBrains Mono', monospace; font-weight: 700; font-size: 52px; color: var(--accent); letter-spacing: -2px; line-height: 1; }
   .cal-unit { font-size: 12px; color: var(--muted); margin-top: 4px; }
 
-  /* Section */
   .section { margin-bottom: 20px; }
   .sec-title { font-size: 11px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 10px; border-bottom: 1px solid var(--border); padding-bottom: 6px; }
 
-  /* Meal input */
   .meal-entry { margin-bottom: 12px; }
   .meal-label-txt { font-size: 11px; color: var(--muted); letter-spacing: 1px; margin-bottom: 4px; }
   .input-row { display: flex; gap: 8px; }
   .text-input { flex: 1; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 9px 12px; font-size: 13px; font-family: 'Noto Serif JP', serif; color: var(--ink); -webkit-appearance: none; }
   .text-input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
   .add-btn { background: var(--ink); color: var(--bg); border: none; border-radius: 4px; padding: 9px 14px; font-size: 12px; font-family: 'Noto Serif JP', serif; font-weight: 700; cursor: pointer; white-space: nowrap; }
-  .add-btn:disabled { opacity: 0.4; }
 
-  /* Meal rows */
   .meal-row { display: flex; justify-content: space-between; align-items: flex-start; padding: 10px 0; border-bottom: 1px solid var(--border); gap: 8px; animation: fadeIn 0.3s ease; }
   .meal-row-l { flex: 1; }
   .meal-meta { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
@@ -77,36 +85,66 @@
   .meal-cal-unit { font-size: 10px; color: var(--muted); }
   .del-btn { background: none; border: none; color: var(--muted); cursor: pointer; font-size: 11px; padding: 2px; }
 
-  /* Weight */
   .w-row { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
   .w-input { width: 90px; background: var(--card); border: 1px solid var(--border); border-radius: 4px; padding: 9px 12px; font-size: 18px; font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); -webkit-appearance: none; }
-  .w-input:focus { outline: 2px solid var(--accent); }
   .w-unit { font-size: 13px; color: var(--muted); }
   .weight-logged { font-size: 12px; color: var(--green); margin-top: 4px; animation: fadeIn 0.3s ease; }
 
-  /* Advice */
   .advice-box { background: var(--green-light); border: 1px solid var(--green); border-radius: 8px; padding: 14px 16px; margin-bottom: 16px; animation: fadeIn 0.3s ease; }
   .advice-title { font-size: 11px; letter-spacing: 2px; color: var(--green); text-transform: uppercase; margin-bottom: 8px; }
   .advice-txt { font-size: 14px; line-height: 1.8; color: var(--ink); }
 
-  /* Graph */
   .graph-card { background: var(--card); border: 1px solid var(--border); border-radius: 8px; padding: 16px 12px; margin-bottom: 16px; }
   .no-data { text-align: center; color: var(--muted); font-size: 13px; line-height: 1.8; padding: 30px 0; }
   .hist-row { display: flex; justify-content: space-between; align-items: center; padding: 7px 0; border-bottom: 1px solid var(--border); font-size: 13px; }
   .hist-date { color: var(--muted); font-size: 11px; font-family: 'JetBrains Mono', monospace; }
   .hist-w { font-family: 'JetBrains Mono', monospace; font-weight: 700; color: var(--ink); }
-  .hist-status { font-size: 11px; }
 
-  /* Tab content */
   .tab-content { display: none; }
   .tab-content.active { display: block; animation: fadeIn 0.3s ease; }
 
-  @keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+  /* モーダル */
+  .modal-overlay { position: fixed; top:0; left:0; right:0; bottom:0; background: rgba(0,0,0,0.5); display: flex; align-items: center; justify-content: center; z-index: 100; padding: 24px; }
+  .modal { background: var(--bg); border-radius: 12px; padding: 28px 24px; width: 100%; max-width: 400px; animation: fadeIn 0.2s ease; }
+  .modal-title { font-size: 16px; font-weight: 700; margin-bottom: 20px; }
+  .modal-btn-row { display: flex; gap: 10px; margin-top: 20px; }
+  .modal-cancel { flex: 1; background: var(--border); color: var(--ink); border: none; border-radius: 6px; padding: 12px 0; font-size: 13px; font-family: inherit; cursor: pointer; }
+  .modal-save { flex: 2; background: var(--accent); color: #fff; border: none; border-radius: 6px; padding: 12px 0; font-size: 13px; font-family: inherit; font-weight: 700; cursor: pointer; }
+
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
 </style>
 </head>
 <body>
+
+<!-- 初期設定画面 -->
+<div id="setupScreen" style="display:none">
+  <div class="setup-screen">
+    <div class="setup-title">BODY LOG</div>
+    <div class="setup-sub">毎日の食事と体重を記録して、<br>目標体重を達成しましょう。<br>まず目標を設定してください。</div>
+    <div class="setup-field">
+      <span class="setup-label">あなたの名前</span>
+      <input class="setup-input setup-input-sm" type="text" id="setupName" placeholder="例：原さん">
+    </div>
+    <div class="setup-field">
+      <span class="setup-label">現在の体重 (kg)</span>
+      <input class="setup-input" type="number" id="setupCurrentWeight" placeholder="65.0" step="0.1" inputmode="decimal">
+    </div>
+    <div class="setup-field">
+      <span class="setup-label">目標体重 (kg)</span>
+      <input class="setup-input" type="number" id="setupGoalWeight" placeholder="58.0" step="0.1" inputmode="decimal">
+    </div>
+    <div class="setup-field">
+      <span class="setup-label">達成したい日</span>
+      <input class="setup-input setup-input-sm" type="date" id="setupGoalDate">
+      <div class="setup-note">この日までに目標体重を達成します</div>
+    </div>
+    <button class="setup-btn" onclick="saveSetup()">はじめる →</button>
+  </div>
+</div>
+
+<!-- メイン画面 -->
+<div id="mainScreen" style="display:none">
 <div id="app">
-  <!-- Header -->
   <div class="header">
     <div>
       <div class="app-name">BODY LOG</div>
@@ -118,12 +156,12 @@
     </div>
   </div>
 
-  <!-- Goal card -->
   <div class="goal-card">
+    <button class="goal-edit-btn" onclick="openGoalEdit()">目標を変更</button>
     <div class="goal-row">
       <div>
         <div class="lbl">目標</div>
-        <div class="goal-val">58.0kg <span class="goal-date">2026.12.31</span></div>
+        <div class="goal-val" id="goalVal">-</div>
       </div>
       <div style="text-align:right">
         <div class="lbl">残り</div>
@@ -137,29 +175,24 @@
     <div class="diff-row" id="weightDiff" style="display:none"></div>
   </div>
 
-  <!-- Tabs -->
   <div class="tabs">
     <button class="tab active" onclick="switchTab('today')">今日の記録</button>
     <button class="tab" onclick="switchTab('graph')">グラフ</button>
   </div>
 
-  <!-- TODAY tab -->
   <div id="tab-today" class="tab-content active">
     <div class="cal-card">
       <div class="cal-num" id="totalCal">0</div>
       <div class="cal-unit">kcal　今日の合計</div>
     </div>
-
     <div class="section">
       <div class="sec-title">食事を記録する</div>
       <div id="mealInputs"></div>
     </div>
-
     <div class="section" id="mealListSection" style="display:none">
       <div class="sec-title">今日の食事</div>
       <div id="mealList"></div>
     </div>
-
     <div class="section">
       <div class="sec-title">今日の体重</div>
       <div class="w-row">
@@ -169,14 +202,12 @@
       </div>
       <div class="weight-logged" id="weightLogged" style="display:none"></div>
     </div>
-
     <div id="adviceBox" style="display:none" class="advice-box">
       <div class="advice-title">今日のアドバイス</div>
       <div class="advice-txt" id="adviceTxt"></div>
     </div>
   </div>
 
-  <!-- GRAPH tab -->
   <div id="tab-graph" class="tab-content">
     <div class="graph-card">
       <div class="sec-title">体重推移 vs 目標ライン</div>
@@ -189,206 +220,180 @@
     </div>
   </div>
 </div>
+</div>
+
+<!-- 目標変更モーダル -->
+<div id="goalModal" class="modal-overlay" style="display:none" onclick="closeModalOutside(event)">
+  <div class="modal">
+    <div class="modal-title">目標を変更する</div>
+    <div class="setup-field">
+      <span class="setup-label">目標体重 (kg)</span>
+      <input class="setup-input" type="number" id="editGoalWeight" step="0.1" inputmode="decimal">
+    </div>
+    <div class="setup-field">
+      <span class="setup-label">達成したい日</span>
+      <input class="setup-input setup-input-sm" type="date" id="editGoalDate">
+    </div>
+    <div class="modal-btn-row">
+      <button class="modal-cancel" onclick="document.getElementById('goalModal').style.display='none'">キャンセル</button>
+      <button class="modal-save" onclick="saveGoalEdit()">保存する</button>
+    </div>
+  </div>
+</div>
 
 <script>
-// ── 定数 ─────────────────────────────────────────────────────────────────────
-const GOAL_WEIGHT = 58.0;
-const GOAL_DATE = new Date("2026-12-31");
-const START_DATE = new Date("2026-05-07");
-const START_WEIGHT = 65.0;
 const STORAGE_KEY = "healthlog_v2";
+const GOAL_KEY = "healthlog_goal";
 const MEAL_LABELS = ["朝食","昼食","夕食","間食"];
 
-// ── 食品データベース ───────────────────────────────────────────────────────────
 const FOOD_DB = [
-  {keys:["ご飯","ごはん","白米"],cal:252,unit:"茶碗1杯"},
-  {keys:["ご飯大盛り","大盛りご飯"],cal:378,unit:"大盛り"},
-  {keys:["ご飯少なめ","ごはん少なめ"],cal:180,unit:"少なめ"},
-  {keys:["おにぎり","おむすび"],cal:170,unit:"1個"},
-  {keys:["食パン","トースト","パン"],cal:158,unit:"1枚"},
-  {keys:["クロワッサン"],cal:210,unit:"1個"},
-  {keys:["うどん"],cal:270,unit:"1杯"},
-  {keys:["そば","蕎麦"],cal:260,unit:"1杯"},
-  {keys:["ラーメン","らーめん"],cal:480,unit:"1杯"},
-  {keys:["パスタ","スパゲッティ"],cal:380,unit:"1人前"},
-  {keys:["チャーハン","焼き飯"],cal:620,unit:"1人前"},
-  {keys:["カレーライス","カレー"],cal:720,unit:"1人前"},
-  {keys:["オムライス"],cal:650,unit:"1人前"},
-  {keys:["親子丼"],cal:580,unit:"1杯"},
-  {keys:["牛丼大盛り"],cal:820,unit:"大盛り"},
-  {keys:["牛丼"],cal:637,unit:"並盛り"},
-  {keys:["天丼"],cal:730,unit:"1杯"},
-  {keys:["刺身定食","さしみ定食"],cal:500,unit:"1食"},
-  {keys:["焼き魚定食","焼魚定食"],cal:520,unit:"1食"},
-  {keys:["焼肉定食"],cal:750,unit:"1食"},
-  {keys:["ハンバーグ定食"],cal:680,unit:"1食"},
-  {keys:["唐揚げ定食","からあげ定食"],cal:750,unit:"1食"},
-  {keys:["豚骨ラーメン"],cal:550,unit:"1杯"},
-  {keys:["味噌ラーメン"],cal:510,unit:"1杯"},
-  {keys:["醤油ラーメン"],cal:470,unit:"1杯"},
-  {keys:["つけ麺"],cal:580,unit:"1人前"},
-  {keys:["焼きそば"],cal:450,unit:"1人前"},
-  {keys:["そうめん","素麺"],cal:220,unit:"1人前"},
-  {keys:["唐揚げ","からあげ"],cal:220,unit:"3個"},
-  {keys:["焼き鳥","やきとり"],cal:130,unit:"2本"},
-  {keys:["ステーキ"],cal:400,unit:"150g"},
-  {keys:["トンカツ","豚カツ"],cal:380,unit:"1枚"},
-  {keys:["ハンバーグ"],cal:280,unit:"1個"},
-  {keys:["餃子","ぎょうざ"],cal:200,unit:"5個"},
-  {keys:["焼き魚","焼魚","鮭","さけ"],cal:170,unit:"1切れ"},
-  {keys:["刺身","さしみ"],cal:150,unit:"1人前"},
-  {keys:["エビフライ"],cal:180,unit:"2本"},
-  {keys:["天ぷら","てんぷら"],cal:300,unit:"盛り合わせ"},
-  {keys:["しゃぶしゃぶ"],cal:400,unit:"1人前"},
-  {keys:["すき焼き"],cal:520,unit:"1人前"},
-  {keys:["目玉焼き"],cal:90,unit:"1個"},
-  {keys:["ゆで卵","茹で卵"],cal:78,unit:"1個"},
-  {keys:["卵","たまご","玉子"],cal:78,unit:"1個"},
-  {keys:["スクランブルエッグ"],cal:140,unit:"2個分"},
-  {keys:["豆腐","冷奴","湯豆腐"],cal:80,unit:"1丁"},
-  {keys:["納豆","なっとう"],cal:100,unit:"1パック"},
-  {keys:["味噌汁","みそ汁","みそしる"],cal:35,unit:"1杯"},
-  {keys:["サラダ","グリーンサラダ"],cal:30,unit:"1皿"},
-  {keys:["シーザーサラダ"],cal:180,unit:"1皿"},
-  {keys:["ポテトサラダ"],cal:160,unit:"1人前"},
-  {keys:["野菜炒め","やさい炒め"],cal:150,unit:"1人前"},
-  {keys:["枝豆","えだまめ"],cal:100,unit:"100g"},
-  {keys:["ビッグマック"],cal:525,unit:"1個"},
-  {keys:["チーズバーガー"],cal:330,unit:"1個"},
-  {keys:["ハンバーガー","バーガー"],cal:290,unit:"1個"},
-  {keys:["フライドポテト","ポテト"],cal:240,unit:"Mサイズ"},
-  {keys:["ピザ"],cal:260,unit:"1切れ"},
-  {keys:["たこ焼き","タコ焼き"],cal:300,unit:"8個"},
-  {keys:["お好み焼き"],cal:380,unit:"1枚"},
-  {keys:["牛乳","ミルク"],cal:130,unit:"200ml"},
-  {keys:["ヨーグルト"],cal:60,unit:"1個"},
-  {keys:["チーズ"],cal:100,unit:"1枚"},
-  {keys:["バナナ"],cal:86,unit:"1本"},
-  {keys:["りんご","リンゴ"],cal:84,unit:"1個"},
-  {keys:["みかん","オレンジ"],cal:45,unit:"1個"},
-  {keys:["いちご","苺"],cal:30,unit:"5個"},
-  {keys:["スイカ","すいか"],cal:80,unit:"1切れ"},
-  {keys:["桃","もも"],cal:65,unit:"1個"},
-  {keys:["チョコレート","チョコ"],cal:150,unit:"板チョコ半分"},
-  {keys:["ポテトチップス","ポテチ"],cal:350,unit:"1袋"},
-  {keys:["クッキー"],cal:80,unit:"2枚"},
-  {keys:["ショートケーキ","ケーキ"],cal:320,unit:"1個"},
-  {keys:["アイスクリーム","アイス"],cal:180,unit:"1個"},
-  {keys:["プリン"],cal:130,unit:"1個"},
-  {keys:["大福","だいふく"],cal:120,unit:"1個"},
-  {keys:["どら焼き"],cal:180,unit:"1個"},
-  {keys:["せんべい","煎餅"],cal:100,unit:"3枚"},
-  {keys:["カフェラテ","ラテ"],cal:120,unit:"1杯"},
-  {keys:["コーヒー","珈琲"],cal:5,unit:"ブラック1杯"},
-  {keys:["緑茶","お茶","日本茶"],cal:2,unit:"1杯"},
-  {keys:["コーラ","ジュース","サイダー"],cal:140,unit:"350ml"},
-  {keys:["オレンジジュース","野菜ジュース"],cal:110,unit:"200ml"},
-  {keys:["プロテイン"],cal:120,unit:"1杯"},
-  {keys:["サンドイッチ"],cal:280,unit:"1パック"},
-  {keys:["おでん"],cal:150,unit:"3種"},
-  {keys:["肉まん"],cal:200,unit:"1個"},
-  {keys:["あんまん"],cal:220,unit:"1個"},
-  {keys:["シュウマイ","焼売"],cal:180,unit:"3個"},
+  {keys:["ご飯","ごはん","白米"],cal:252},{keys:["ご飯大盛り","大盛りご飯"],cal:378},
+  {keys:["ご飯少なめ","ごはん少なめ"],cal:180},{keys:["おにぎり","おむすび"],cal:170},
+  {keys:["食パン","トースト","パン"],cal:158},{keys:["クロワッサン"],cal:210},
+  {keys:["うどん"],cal:270},{keys:["そば","蕎麦"],cal:260},
+  {keys:["ラーメン","らーめん"],cal:480},{keys:["パスタ","スパゲッティ"],cal:380},
+  {keys:["チャーハン","焼き飯"],cal:620},{keys:["カレーライス","カレー"],cal:720},
+  {keys:["オムライス"],cal:650},{keys:["親子丼"],cal:580},
+  {keys:["牛丼大盛り"],cal:820},{keys:["牛丼"],cal:637},
+  {keys:["天丼"],cal:730},{keys:["刺身定食","さしみ定食"],cal:500},
+  {keys:["焼き魚定食","焼魚定食"],cal:520},{keys:["焼肉定食"],cal:750},
+  {keys:["ハンバーグ定食"],cal:680},{keys:["唐揚げ定食","からあげ定食"],cal:750},
+  {keys:["豚骨ラーメン"],cal:550},{keys:["味噌ラーメン"],cal:510},
+  {keys:["醤油ラーメン"],cal:470},{keys:["つけ麺"],cal:580},
+  {keys:["焼きそば"],cal:450},{keys:["そうめん","素麺"],cal:220},
+  {keys:["唐揚げ","からあげ"],cal:220},{keys:["焼き鳥","やきとり"],cal:130},
+  {keys:["ステーキ"],cal:400},{keys:["トンカツ","豚カツ"],cal:380},
+  {keys:["ハンバーグ"],cal:280},{keys:["餃子","ぎょうざ"],cal:200},
+  {keys:["焼き魚","焼魚","鮭","さけ"],cal:170},{keys:["刺身","さしみ"],cal:150},
+  {keys:["エビフライ"],cal:180},{keys:["天ぷら","てんぷら"],cal:300},
+  {keys:["しゃぶしゃぶ"],cal:400},{keys:["すき焼き"],cal:520},
+  {keys:["目玉焼き"],cal:90},{keys:["ゆで卵","茹で卵"],cal:78},
+  {keys:["卵","たまご","玉子"],cal:78},{keys:["スクランブルエッグ"],cal:140},
+  {keys:["豆腐","冷奴","湯豆腐"],cal:80},{keys:["納豆","なっとう"],cal:100},
+  {keys:["味噌汁","みそ汁","みそしる"],cal:35},{keys:["サラダ","グリーンサラダ"],cal:30},
+  {keys:["シーザーサラダ"],cal:180},{keys:["ポテトサラダ"],cal:160},
+  {keys:["野菜炒め","やさい炒め"],cal:150},{keys:["枝豆","えだまめ"],cal:100},
+  {keys:["ビッグマック"],cal:525},{keys:["チーズバーガー"],cal:330},
+  {keys:["ハンバーガー","バーガー"],cal:290},{keys:["フライドポテト","ポテト"],cal:240},
+  {keys:["ピザ"],cal:260},{keys:["たこ焼き","タコ焼き"],cal:300},
+  {keys:["お好み焼き"],cal:380},{keys:["牛乳","ミルク"],cal:130},
+  {keys:["ヨーグルト"],cal:60},{keys:["チーズ"],cal:100},
+  {keys:["バナナ"],cal:86},{keys:["りんご","リンゴ"],cal:84},
+  {keys:["みかん","オレンジ"],cal:45},{keys:["いちご","苺"],cal:30},
+  {keys:["スイカ","すいか"],cal:80},{keys:["桃","もも"],cal:65},
+  {keys:["チョコレート","チョコ"],cal:150},{keys:["ポテトチップス","ポテチ"],cal:350},
+  {keys:["クッキー"],cal:80},{keys:["ショートケーキ","ケーキ"],cal:320},
+  {keys:["アイスクリーム","アイス"],cal:180},{keys:["プリン"],cal:130},
+  {keys:["大福","だいふく"],cal:120},{keys:["どら焼き"],cal:180},
+  {keys:["せんべい","煎餅"],cal:100},{keys:["カフェラテ","ラテ"],cal:120},
+  {keys:["コーヒー","珈琲"],cal:5},{keys:["緑茶","お茶","日本茶"],cal:2},
+  {keys:["コーラ","ジュース","サイダー"],cal:140},{keys:["オレンジジュース","野菜ジュース"],cal:110},
+  {keys:["プロテイン"],cal:120},{keys:["サンドイッチ"],cal:280},
+  {keys:["おでん"],cal:150},{keys:["肉まん"],cal:200},
+  {keys:["あんまん"],cal:220},{keys:["シュウマイ","焼売"],cal:180},
 ];
 
-// ── カロリー推定 ───────────────────────────────────────────────────────────────
 function estimateCal(text) {
-  const lower = text.toLowerCase();
-  const results = [];
-  const matched = new Set();
+  const lower = text.toLowerCase(), results = [], matched = new Set();
   for (const food of FOOD_DB) {
     for (const key of food.keys) {
       if (lower.includes(key.toLowerCase()) && !matched.has(food)) {
         matched.add(food);
-        // 数量チェック
-        const numMatch = lower.match(new RegExp(`(\\d+)\\s*(?:個|本|杯|枚|皿).*${key}|${key}.*?(\\d+)\\s*(?:個|本|杯|枚|皿)`));
-        const qty = numMatch ? parseInt(numMatch[1] || numMatch[2]) : 1;
-        results.push({ name: food.keys[0], cal: Math.round(food.cal * qty), unit: food.unit });
+        const m = lower.match(new RegExp(`(\\d+)\\s*(?:個|本|杯|枚|皿).*${key}|${key}.*?(\\d+)\\s*(?:個|本|杯|枚|皿)`));
+        const qty = m ? parseInt(m[1]||m[2]) : 1;
+        results.push({name:food.keys[0], cal:Math.round(food.cal*qty)});
         break;
       }
     }
   }
-  if (results.length === 0) {
-    results.push({ name: text, cal: 400, unit: "推定値", unknown: true });
-  }
-  return { items: results, total: results.reduce((s, r) => s + r.cal, 0), unknown: results.some(r => r.unknown) };
+  if (!results.length) results.push({name:text, cal:400, unknown:true});
+  return {items:results, total:results.reduce((s,r)=>s+r.cal,0), unknown:results.some(r=>r.unknown)};
 }
 
-// ── ストレージ ─────────────────────────────────────────────────────────────────
-function loadData() {
-  try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || { days: {} }; }
-  catch { return { days: {} }; }
-}
+function loadData() { try { return JSON.parse(localStorage.getItem(STORAGE_KEY))||{days:{}}; } catch { return {days:{}}; } }
 function saveData(d) { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); }
-function todayKey() { return new Date().toISOString().slice(0, 10); }
+function loadGoal() { try { return JSON.parse(localStorage.getItem(GOAL_KEY)); } catch { return null; } }
+function persistGoal(g) { localStorage.setItem(GOAL_KEY, JSON.stringify(g)); }
+function todayKey() { return new Date().toISOString().slice(0,10); }
 
-// ── 目標計算 ───────────────────────────────────────────────────────────────────
-function calcDaysLeft() {
-  return Math.max(0, Math.ceil((GOAL_DATE - new Date()) / 86400000));
-}
-function calcIdealWeight(dateStr) {
-  const d = new Date(dateStr);
-  const ratio = Math.min(1, Math.max(0, (d - START_DATE) / (GOAL_DATE - START_DATE)));
-  return Math.round((START_WEIGHT - (START_WEIGHT - GOAL_WEIGHT) * ratio) * 10) / 10;
-}
-function getAdvice(totalCal, weight, daysLeft) {
-  const diff = weight - GOAL_WEIGHT;
-  const targetCal = Math.round(1700 - (diff * 7700 / daysLeft) * 0.5);
-  if (totalCal > 2200) return `今日は${totalCal}kcalと多めでした。目安の${targetCal}kcal前後を意識すると、12月31日の目標に近づきます。明日は野菜から食べ始めてみましょう。`;
-  if (totalCal > 1800) return `今日は${totalCal}kcalとまずまずのペースです。残り${daysLeft}日、この調子で続ければ目標の58kgは届きます。`;
-  if (totalCal > 1200) return `今日は${totalCal}kcalと理想的な範囲です。極端に減らさずこのバランスを保つのが長続きの秘訣です。`;
-  return `今日は${totalCal}kcalと少なめです。急激な制限は続かないので、栄養バランスには気をつけてください。`;
-}
+let GOAL = null, appData = loadData(), chartInstance = null;
 
-// ── グローバル状態 ─────────────────────────────────────────────────────────────
-let appData = loadData();
-let chartInstance = null;
-
-function getToday() { return appData.days[todayKey()] || { meals: [], weight: null }; }
+function getToday() { return appData.days[todayKey()]||{meals:[],weight:null}; }
 function saveToday(patch) {
-  const today = todayKey();
-  appData.days[today] = { ...getToday(), ...patch };
+  appData.days[todayKey()] = {...getToday(),...patch};
   saveData(appData);
 }
 
-// ── 描画 ───────────────────────────────────────────────────────────────────────
+function goalDate() { return new Date(GOAL.goalDate+"T00:00:00"); }
+function startDate() { return new Date(GOAL.startDate+"T00:00:00"); }
+function calcDaysLeft() { return Math.max(0, Math.ceil((goalDate()-new Date())/86400000)); }
+function calcIdeal(dateStr) {
+  const d = new Date(dateStr+"T00:00:00");
+  const ratio = Math.min(1,Math.max(0,(d-startDate())/(goalDate()-startDate())));
+  return Math.round((GOAL.startWeight-(GOAL.startWeight-GOAL.goalWeight)*ratio)*10)/10;
+}
+function getAdvice(cal, weight, dl) {
+  const diff = weight-GOAL.goalWeight;
+  const target = Math.round(1700-(diff*7700/Math.max(dl,1))*0.5);
+  if (cal>2200) return `今日は${cal}kcalと多めでした。目安の${target}kcal前後を意識すると、${GOAL.goalDate.replace(/-/g,"/")}の目標に近づきます。明日は野菜から食べ始めてみましょう。`;
+  if (cal>1800) return `今日は${cal}kcalとまずまずのペースです。残り${dl}日、この調子で続ければ目標の${GOAL.goalWeight}kgは届きます。`;
+  if (cal>1200) return `今日は${cal}kcalと理想的な範囲です。極端に減らさずこのバランスを保つのが長続きの秘訣です。`;
+  return `今日は${cal}kcalと少なめです。急激な制限は続かないので、栄養バランスには気をつけてください。`;
+}
+
+function saveSetup() {
+  const name = document.getElementById("setupName").value.trim();
+  const sw = parseFloat(document.getElementById("setupCurrentWeight").value);
+  const gw = parseFloat(document.getElementById("setupGoalWeight").value);
+  const gd = document.getElementById("setupGoalDate").value;
+  if (!name||isNaN(sw)||isNaN(gw)||!gd) { alert("すべての項目を入力してください"); return; }
+  GOAL = {name, startWeight:sw, goalWeight:gw, goalDate:gd, startDate:todayKey()};
+  persistGoal(GOAL);
+  document.getElementById("setupScreen").style.display="none";
+  document.getElementById("mainScreen").style.display="block";
+  render();
+}
+
+function openGoalEdit() {
+  document.getElementById("editGoalWeight").value = GOAL.goalWeight;
+  document.getElementById("editGoalDate").value = GOAL.goalDate;
+  document.getElementById("goalModal").style.display="flex";
+}
+function closeModalOutside(e) { if (e.target.id==="goalModal") document.getElementById("goalModal").style.display="none"; }
+function saveGoalEdit() {
+  const gw = parseFloat(document.getElementById("editGoalWeight").value);
+  const gd = document.getElementById("editGoalDate").value;
+  if (isNaN(gw)||!gd) return;
+  GOAL.goalWeight=gw; GOAL.goalDate=gd;
+  persistGoal(GOAL);
+  document.getElementById("goalModal").style.display="none";
+  render();
+}
+
 function render() {
-  const today = getToday();
-  const todayStr = todayKey();
+  const today = getToday(), todayStr = todayKey();
+  document.getElementById("dateStr").textContent = new Date().toLocaleDateString("ja-JP",{month:"long",day:"numeric",weekday:"short"});
 
-  // 日付
-  document.getElementById("dateStr").textContent =
-    new Date().toLocaleDateString("ja-JP", { month: "long", day: "numeric", weekday: "short" });
+  let streak=0, d=new Date();
+  while(true){const k=d.toISOString().slice(0,10);if(appData.days[k]?.weight){streak++;d.setDate(d.getDate()-1);}else break;}
+  document.getElementById("streakNum").textContent=streak;
 
-  // ストリーク
-  let streak = 0, d = new Date();
-  while (true) {
-    const k = d.toISOString().slice(0, 10);
-    if (appData.days[k]?.weight) { streak++; d.setDate(d.getDate() - 1); } else break;
-  }
-  document.getElementById("streakNum").textContent = streak;
+  const dl=calcDaysLeft();
+  document.getElementById("daysLeft").innerHTML=`${dl}<span class="days-unit">日</span>`;
+  document.getElementById("goalVal").innerHTML=`${GOAL.goalWeight}kg <span class="goal-date-lbl">${GOAL.goalDate.replace(/-/g,".")}</span>`;
+  document.getElementById("idealWeight").textContent=`${calcIdeal(todayStr)} kg`;
 
-  // 目標
-  const dl = calcDaysLeft();
-  document.getElementById("daysLeft").innerHTML = `${dl}<span class="days-unit">日</span>`;
-  const ideal = calcIdealWeight(todayStr);
-  document.getElementById("idealWeight").textContent = `${ideal} kg`;
+  const diffEl=document.getElementById("weightDiff");
+  if(today.weight){
+    const diff=Math.round((today.weight-GOAL.goalWeight)*10)/10;
+    diffEl.style.display="block";
+    diffEl.innerHTML=`<span style="color:${diff>0?'var(--accent)':'var(--green)'};font-weight:700">${diff>0?"▲":"▼"}${Math.abs(diff)}kg</span> <span style="color:var(--muted)">目標まで</span>`;
+  } else diffEl.style.display="none";
 
-  // 体重差
-  const diffEl = document.getElementById("weightDiff");
-  if (today.weight) {
-    const diff = Math.round((today.weight - GOAL_WEIGHT) * 10) / 10;
-    diffEl.style.display = "block";
-    diffEl.innerHTML = `<span style="color:${diff > 0 ? 'var(--accent)' : 'var(--green)'}; font-weight:700">${diff > 0 ? "▲" : "▼"}${Math.abs(diff)}kg</span> <span style="color:var(--muted)">目標まで</span>`;
-  } else { diffEl.style.display = "none"; }
+  const totalCal=(today.meals||[]).reduce((s,m)=>s+(m.total||0),0);
+  document.getElementById("totalCal").textContent=totalCal.toLocaleString();
 
-  // 合計カロリー
-  const totalCal = (today.meals || []).reduce((s, m) => s + (m.total || 0), 0);
-  document.getElementById("totalCal").textContent = totalCal.toLocaleString();
-
-  // 食事入力欄
-  const inputsEl = document.getElementById("mealInputs");
-  inputsEl.innerHTML = MEAL_LABELS.map(label => `
+  document.getElementById("mealInputs").innerHTML=MEAL_LABELS.map(label=>`
     <div class="meal-entry">
       <div class="meal-label-txt">${label}</div>
       <div class="input-row">
@@ -399,157 +404,100 @@ function render() {
         }" onkeydown="if(event.key==='Enter')addMeal('${label}')">
         <button class="add-btn" onclick="addMeal('${label}')">追加</button>
       </div>
-    </div>
-  `).join("");
+    </div>`).join("");
 
-  // 食事リスト
-  const meals = today.meals || [];
-  const listSection = document.getElementById("mealListSection");
-  const listEl = document.getElementById("mealList");
-  if (meals.length > 0) {
-    listSection.style.display = "block";
-    listEl.innerHTML = meals.map((m, i) => `
+  const meals=today.meals||[];
+  const ls=document.getElementById("mealListSection");
+  if(meals.length){
+    ls.style.display="block";
+    document.getElementById("mealList").innerHTML=meals.map((m,i)=>`
       <div class="meal-row">
         <div class="meal-row-l">
-          <div class="meal-meta">
-            <span class="meal-tag">${m.label}</span>
-            <span class="meal-time">${m.timestamp || ""}</span>
-          </div>
+          <div class="meal-meta"><span class="meal-tag">${m.label}</span><span class="meal-time">${m.timestamp||""}</span></div>
           <div class="meal-txt">${m.text}</div>
-          ${m.unknown ? '<div class="unknown-note">※未登録食品のため概算400kcalで計上</div>' : ""}
+          ${m.unknown?'<div class="unknown-note">※未登録食品のため概算400kcalで計上</div>':""}
           <div class="meal-chips">${(m.items||[]).map(it=>`<span class="meal-chip">${it.name} ${it.cal}kcal</span>`).join("")}</div>
         </div>
         <div class="meal-row-r">
-          <span class="meal-cal">${m.total}</span>
-          <span class="meal-cal-unit">kcal</span>
+          <span class="meal-cal">${m.total}</span><span class="meal-cal-unit">kcal</span>
           <button class="del-btn" onclick="removeMeal(${i})">✕</button>
         </div>
-      </div>
-    `).join("");
-  } else { listSection.style.display = "none"; }
+      </div>`).join("");
+  } else ls.style.display="none";
 
-  // 体重
-  const wLogged = document.getElementById("weightLogged");
-  if (today.weight) {
-    wLogged.style.display = "block";
-    wLogged.textContent = `✓ 本日 ${today.weight}kg を記録済み`;
-  } else { wLogged.style.display = "none"; }
+  const wl=document.getElementById("weightLogged");
+  if(today.weight){wl.style.display="block";wl.textContent=`✓ 本日 ${today.weight}kg を記録済み`;}else wl.style.display="none";
 
-  // アドバイス
-  const adviceBox = document.getElementById("adviceBox");
-  if (today.weight && totalCal > 0) {
-    adviceBox.style.display = "block";
-    document.getElementById("adviceTxt").textContent = getAdvice(totalCal, today.weight, dl);
-  } else { adviceBox.style.display = "none"; }
+  const ab=document.getElementById("adviceBox");
+  if(today.weight&&totalCal>0){ab.style.display="block";document.getElementById("adviceTxt").textContent=getAdvice(totalCal,today.weight,dl);}else ab.style.display="none";
 
-  // グラフ・履歴
   renderGraph();
 }
 
 function renderGraph() {
-  const weightDays = Object.entries(appData.days)
-    .filter(([,d]) => d.weight).sort(([a],[b]) => a.localeCompare(b));
-
-  const noData = document.getElementById("noData");
-  const canvas = document.getElementById("weightChart");
-
-  if (weightDays.length === 0) {
-    noData.style.display = "block"; canvas.style.display = "none";
-  } else {
-    noData.style.display = "none"; canvas.style.display = "block";
-
-    // ラベルと実測・理想データ
-    const labels = [], actualData = [], goalData = [];
-    const start = new Date(weightDays[0][0]);
-    const end = new Date(Math.min(GOAL_DATE, new Date(weightDays[weightDays.length-1][0])));
-    end.setMonth(end.getMonth() + 1);
-    const cur = new Date(start);
-    while (cur <= end) {
-      const k = cur.toISOString().slice(0, 10);
-      labels.push(k.slice(5));
-      goalData.push(calcIdealWeight(k));
-      const entry = appData.days[k];
-      actualData.push(entry?.weight || null);
-      cur.setDate(cur.getDate() + 7);
+  const wd=Object.entries(appData.days).filter(([,d])=>d.weight).sort(([a],[b])=>a.localeCompare(b));
+  const nd=document.getElementById("noData"),cv=document.getElementById("weightChart");
+  if(!wd.length){nd.style.display="block";cv.style.display="none";}
+  else {
+    nd.style.display="none";cv.style.display="block";
+    const labels=[],actual=[],goal=[];
+    const start=new Date(wd[0][0]+"T00:00:00"),end=new Date(wd[wd.length-1][0]+"T00:00:00");
+    end.setMonth(end.getMonth()+1);
+    const cur=new Date(start);
+    while(cur<=end){
+      const k=cur.toISOString().slice(0,10);
+      labels.push(k.slice(5));goal.push(calcIdeal(k));actual.push(appData.days[k]?.weight||null);
+      cur.setDate(cur.getDate()+7);
     }
-
-    if (chartInstance) chartInstance.destroy();
-    chartInstance = new Chart(canvas, {
-      type: "line",
-      data: {
-        labels,
-        datasets: [
-          { label: "理想ペース", data: goalData, borderColor: "#2e7d5e", borderDash: [5,5], borderWidth: 1.5, pointRadius: 0, tension: 0.3 },
-          { label: "実測", data: actualData, borderColor: "#c84b2f", borderWidth: 2.5, pointRadius: 5, pointBackgroundColor: "#c84b2f", tension: 0.3, spanGaps: true },
-        ]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: true,
-        plugins: { legend: { labels: { font: { family: "'Noto Serif JP',serif", size: 11 }, color: "#9a8e80" } }, tooltip: { titleFont: { family: "inherit" }, bodyFont: { family: "inherit" } } },
-        scales: {
-          x: { ticks: { font: { family: "inherit", size: 9 }, color: "#9a8e80" }, grid: { color: "#e8e0d5" } },
-          y: { ticks: { font: { family: "inherit", size: 9 }, color: "#9a8e80" }, grid: { color: "#e8e0d5" } }
-        }
-      }
+    if(chartInstance)chartInstance.destroy();
+    chartInstance=new Chart(cv,{
+      type:"line",data:{labels,datasets:[
+        {label:"理想ペース",data:goal,borderColor:"#2e7d5e",borderDash:[5,5],borderWidth:1.5,pointRadius:0,tension:0.3},
+        {label:"実測",data:actual,borderColor:"#c84b2f",borderWidth:2.5,pointRadius:5,pointBackgroundColor:"#c84b2f",tension:0.3,spanGaps:true},
+      ]},
+      options:{responsive:true,maintainAspectRatio:true,
+        plugins:{legend:{labels:{font:{family:"'Noto Serif JP',serif",size:11},color:"#9a8e80"}}},
+        scales:{x:{ticks:{font:{family:"inherit",size:9},color:"#9a8e80"},grid:{color:"#e8e0d5"}},
+                y:{ticks:{font:{family:"inherit",size:9},color:"#9a8e80"},grid:{color:"#e8e0d5"}}}}
     });
   }
-
-  // 履歴リスト
-  const histEl = document.getElementById("histList");
-  if (weightDays.length === 0) { histEl.innerHTML = ""; return; }
-  histEl.innerHTML = [...weightDays].reverse().slice(0, 14).map(([date, d]) => {
-    const diff = Math.round((d.weight - GOAL_WEIGHT) * 10) / 10;
-    return `<div class="hist-row">
-      <span class="hist-date">${date}</span>
-      <span class="hist-w">${d.weight} kg</span>
-      <span class="hist-status" style="color:${d.weight<=GOAL_WEIGHT?'var(--green)':'var(--muted)'}">
-        ${d.weight<=GOAL_WEIGHT?"✓ 目標達成!":"あと "+Math.abs(diff)+"kg"}
-      </span>
-    </div>`;
+  const he=document.getElementById("histList");
+  if(!wd.length){he.innerHTML="";return;}
+  he.innerHTML=[...wd].reverse().slice(0,14).map(([date,d])=>{
+    const diff=Math.round((d.weight-GOAL.goalWeight)*10)/10;
+    return `<div class="hist-row"><span class="hist-date">${date}</span><span class="hist-w">${d.weight} kg</span><span style="font-size:11px;color:${d.weight<=GOAL.goalWeight?'var(--green)':'var(--muted)'}">${d.weight<=GOAL.goalWeight?"✓ 目標達成!":"あと "+Math.abs(diff)+"kg"}</span></div>`;
   }).join("");
 }
 
-// ── アクション ─────────────────────────────────────────────────────────────────
 function addMeal(label) {
-  const input = document.getElementById(`input-${label}`);
-  const text = input.value.trim();
-  if (!text) return;
-  const result = estimateCal(text);
-  const meals = [...(getToday().meals || []), {
-    label, text, ...result,
-    timestamp: new Date().toLocaleTimeString("ja-JP", { hour: "2-digit", minute: "2-digit" })
-  }];
-  saveToday({ meals });
-  input.value = "";
+  const inp=document.getElementById(`input-${label}`),text=inp.value.trim();
+  if(!text)return;
+  saveToday({meals:[...(getToday().meals||[]),{label,text,...estimateCal(text),timestamp:new Date().toLocaleTimeString("ja-JP",{hour:"2-digit",minute:"2-digit"})}]});
+  inp.value="";render();
+}
+function removeMeal(idx){const m=[...(getToday().meals||[])];m.splice(idx,1);saveToday({meals:m});render();}
+function logWeight(){
+  const v=parseFloat(document.getElementById("weightInput").value);
+  if(isNaN(v)||v<30||v>200)return;
+  saveToday({weight:v});document.getElementById("weightInput").value="";render();
+}
+function switchTab(tab){
+  document.querySelectorAll(".tab").forEach((el,i)=>el.classList.toggle("active",(i===0&&tab==="today")||(i===1&&tab==="graph")));
+  document.getElementById("tab-today").classList.toggle("active",tab==="today");
+  document.getElementById("tab-graph").classList.toggle("active",tab==="graph");
+  if(tab==="graph")renderGraph();
+}
+
+// 起動
+GOAL=loadGoal();
+if(!GOAL){
+  document.getElementById("setupScreen").style.display="block";
+  const def=new Date();def.setMonth(def.getMonth()+6);
+  document.getElementById("setupGoalDate").value=def.toISOString().slice(0,10);
+} else {
+  document.getElementById("mainScreen").style.display="block";
   render();
 }
-
-function removeMeal(idx) {
-  const meals = [...(getToday().meals || [])];
-  meals.splice(idx, 1);
-  saveToday({ meals });
-  render();
-}
-
-function logWeight() {
-  const val = parseFloat(document.getElementById("weightInput").value);
-  if (isNaN(val) || val < 30 || val > 200) return;
-  saveToday({ weight: val });
-  document.getElementById("weightInput").value = "";
-  render();
-}
-
-function switchTab(tab) {
-  document.querySelectorAll(".tab").forEach((el, i) => {
-    el.classList.toggle("active", (i === 0 && tab === "today") || (i === 1 && tab === "graph"));
-  });
-  document.getElementById("tab-today").classList.toggle("active", tab === "today");
-  document.getElementById("tab-graph").classList.toggle("active", tab === "graph");
-  if (tab === "graph") renderGraph();
-}
-
-// ── 起動 ──────────────────────────────────────────────────────────────────────
-render();
 </script>
 </body>
 </html>
